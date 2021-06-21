@@ -33,7 +33,7 @@ loadSprite ('stairs','stairs.png')
 loadSprite ('kaboom', 'kaboom.png')
 loadSprite ('bg','bg.png')
 
-scene ('game', ({ level, score }) => {
+scene ("game", ({ level, score }) => {
         layers (['bg', 'obj', 'ui'], 'obj')
     
         const maps = [
@@ -92,14 +92,14 @@ scene ('game', ({ level, score }) => {
             {
                 value: score,
             },
-            scale(3)
+            scale(2)
         ])
-        
+
         const player = add([
             sprite('link-going-right'),
             pos(5,190),
             {
-                dir: ve2(1,0)
+                dir: vec2(1,0)
             }
         ])
 
@@ -108,7 +108,7 @@ scene ('game', ({ level, score }) => {
         })
 
         player.overlaps('next-level', ()=> {
-            go('game', {
+            go("game", {
                 level: (level + 1) % maps.length,
                 score: scoreLabel.value
             })
@@ -117,25 +117,25 @@ scene ('game', ({ level, score }) => {
         keyDown('left', () => {
             player.changeSprite('link-going-left')
             player.move(-MOVE_SPEED, 0)
-            player.dir = ve2(-1,0)
+            player.dir = vec2(-1,0)
         })
 
         keyDown('right', () => {
             player.changeSprite('link-going-right')
             player.move(MOVE_SPEED, 0)
-            player.dir = ve2(1,0)
+            player.dir = vec2(1,0)
         })
 
         keyDown('up', () => {
             player.changeSprite('link-going-up')
             player.move(0, -MOVE_SPEED)
-            player.dir = ve2(0,-1)
+            player.dir = vec2(0,-1)
         })
 
         keyDown('down', () => {
             player.changeSprite('link-going-down')
             player.move(0, MOVE_SPEED)
-            player.dir = ve2(0,1)
+            player.dir = vec2(0,1)
         })
 
 
@@ -168,6 +168,16 @@ scene ('game', ({ level, score }) => {
             }
         })
 
+        collides ('kaboom','skeletor', (k,s) => {
+            camShake(4)
+            wait(1, () => {
+                destroy(k)
+            })
+            destroy(s)
+            scoreLabel.value++
+            scoreLabel.text = scoreLabel.value
+        })
+
         player.overlaps('dangerous', () => {
             go('lose', { score: scoreLabel.value}) 
         })
@@ -175,8 +185,8 @@ scene ('game', ({ level, score }) => {
 
 })
 
-scene ('lose', ({ score }) => {
+scene ("lose", ({ score }) => {
     add([text(score, 32), origin('center'), pos(width()/2, height()/2)])
 })
 
-start('game',{level:1, score: 0 })
+start("game",{level:0, score: 0 })
